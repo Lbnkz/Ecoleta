@@ -1,5 +1,11 @@
 package views;
 
+import DAO.PontosColetaDAO;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 public class Login extends javax.swing.JFrame {
 
     public Login() {
@@ -109,11 +115,20 @@ public class Login extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    public Boolean nullOrEmpty(String s) {
+        return s == null || s.isEmpty();
+    }
+    
     private void searchCollectionPointsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchCollectionPointsActionPerformed
         String city = this.tfdCity.getText();
-        this.dispose();
-        new CollectionPoints(city).setVisible(true);
+        boolean verify = PontosColetaDAO.buscarCidadeNome(city);
+
+        if (nullOrEmpty(city) || verify == false) {
+            JOptionPane.showMessageDialog(null, "Preencha o campo cidade com um ponto válido!");
+        } else {
+            this.dispose();
+            new CollectionPoints(city).setVisible(true);
+        }
     }//GEN-LAST:event_searchCollectionPointsActionPerformed
 
     private void createCollectPointButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createCollectPointButtonActionPerformed

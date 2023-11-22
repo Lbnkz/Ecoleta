@@ -35,7 +35,7 @@
                           <Component id="mainPanel" max="32767" attributes="0"/>
                           <Group type="102" attributes="0">
                               <Component id="logo" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="295" max="32767" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                               <Component id="goBackButton" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>

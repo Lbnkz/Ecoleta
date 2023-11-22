@@ -1,10 +1,13 @@
 package views;
 
+import DAO.PontosColetaDAO;
+import entity.CollectPoint;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.Set;
+import javax.swing.JOptionPane;
 import org.jxmapviewer.JXMapKit;
 import org.jxmapviewer.viewer.DefaultWaypoint;
 import org.jxmapviewer.viewer.GeoPosition;
@@ -14,13 +17,14 @@ import org.jxmapviewer.viewer.WaypointPainter;
 public class CreateCollectPoint extends javax.swing.JFrame {
 
     private GeoPosition geoPositionSelected;
-    
+    PontosColetaDAO pontosColetaDAO = new PontosColetaDAO();
+
     public CreateCollectPoint() {
         initComponents();
         this.setLocationRelativeTo(null);
         initMap();
     }
-    
+
     private void initMap() {
         JXMapKit mapKit = new JXMapKit();
         mapKit.setDefaultProvider(JXMapKit.DefaultProviders.OpenStreetMaps);
@@ -47,6 +51,7 @@ public class CreateCollectPoint extends javax.swing.JFrame {
         this.panelMap.setLayout(new BorderLayout());
         this.panelMap.add(mapKit);
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -223,13 +228,37 @@ public class CreateCollectPoint extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String name = this.localName.getText();
         String email = this.localEmail.getText();
-        String phone = this.localCity.getText();
+        String city = this.localCity.getText();
         String typeOfWaste = (String) this.localTypeOfWaste.getSelectedItem();
-        Double latitute = this.geoPositionSelected.getLatitude();
+        Double latitude = this.geoPositionSelected.getLatitude();
         Double longitude = this.geoPositionSelected.getLongitude();
-        
-        // CADASTRAR NO BANCO DE DADOS
+
+        if (nullOrEmpty(name) || nullOrEmpty(email) || nullOrEmpty(city) || nullOrEmpty(typeOfWaste) || latitude == null || longitude == null) {
+            JOptionPane.showMessageDialog(null, "Preencha todos os campos obrigatórios.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        CollectPoint nP = new CollectPoint(0, name, email, city, typeOfWaste, latitude, longitude);
+
+        boolean cadastroSucesso = pontosColetaDAO.cadastrarPontoColeta(nP);
+
+        if (cadastroSucesso) {
+            limparCampos();
+            JOptionPane.showMessageDialog(null, "Ponto de coleta cadastrado com sucesso!");
+        } else {
+            JOptionPane.showMessageDialog(null, "Você nao pode cadastrar duas coletas do mesmo material.");
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    public Boolean nullOrEmpty(String s) {
+        return s == null || s.isEmpty();
+    }
+    
+    private void limparCampos() {
+        this.localName.setText("");
+        this.localEmail.setText("");
+        this.localCity.setText("");
+        this.localTypeOfWaste.setSelectedIndex(0);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel goBackButton;

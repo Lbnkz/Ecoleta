@@ -1,5 +1,6 @@
 package views;
 
+import DAO.PontosColetaDAO;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -10,21 +11,21 @@ import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.viewer.Waypoint;
 import org.jxmapviewer.viewer.WaypointPainter;
 import entity.CollectPoint;
+import java.util.List;
 
 public class CollectionPoints extends javax.swing.JFrame {
+
+    private static PontosColetaDAO pontosColetaDAO = new PontosColetaDAO();
 
     public CollectionPoints(String city) {
         initComponents();
         this.setLocationRelativeTo(null);
         this.title.setText("Ponto de coleta em: " + city);
-        loadCollectionPointsOfCity();
+        loadCollectionPointsOfCity(city);
     }
 
-    private void loadCollectionPointsOfCity() {
-        ArrayList<CollectPoint> points = new ArrayList<>(); // REMOVER O NEW ARRAYLIST<>() E SUBSTITUIR PELA CHAMADA NO BANCO
-        points.add(new CollectPoint(-27.237536666590675, -48.62617492675781)); // REMOVER
-        points.add(new CollectPoint(-26.237536666590675, -48.62617492675781)); // REMOVER
-        points.add(new CollectPoint(-28.237536666590675, -48.62617492675781)); // REMOVER
+    private void loadCollectionPointsOfCity(String nm) {
+        ArrayList<CollectPoint> points = pontosColetaDAO.buscarPontosColetaPorCidade(nm);
         drawMap(points);
     }
 
@@ -43,7 +44,7 @@ public class CollectionPoints extends javax.swing.JFrame {
         mapKit.getMainMap().setOverlayPainter(waypointPainter);
 
         for (CollectPoint point : points) {
-            Waypoint newWaypoint = new DefaultWaypoint(point.getLatitude(), point.getLongitute());
+            Waypoint newWaypoint = new DefaultWaypoint(point.getLatitude(), point.getLongitude());
             waypoints.add(newWaypoint);
             waypointPainter.setWaypoints(waypoints);
         }
